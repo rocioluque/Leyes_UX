@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analytics - Versión A (Buena)</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .change-positive {
+            color: #10b981;
+        }
+
+        .change-negative {
+            color: #ef4444;
+        }
+
+        /* Charts */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Table */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Button - Von Restorff */
+        .cta-button {
+            background: var(--warning);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(247, 37, 133, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #d1146a;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <span>📊</span> AnalyticsPro
+        </div>
+        <div class="nav-item active">
+            <span>📈</span> Dashboard
+        </div>
+        <div class="nav-item">
+            <span>👥</span> Usuarios
+        </div>
+        <div class="nav-item">
+            <span>🛒</span> Ventas
+        </div>
+        <div class="nav-item">
+            <span>📋</span> Reportes
+        </div>
+        <div class="nav-item">
+            <span>⚙️</span> Configuración
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h1 class="page-title">Resumen de Rendimiento</h1>
+            <button class="cta-button">Generar Reporte</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active">Hoy</button>
+            <button class="filter-btn">Esta semana</button>
+            <button class="filter-btn">Este mes</button>
+            <button class="filter-btn">Este trimestre</button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Usuarios Activos</div>
+                    <span>👥</span>
+                </div>
+                <div class="stat-value">12,458</div>
+                <div class="stat-change change-positive">
+                    <span>↑</span> 12.5% vs período anterior
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Tasa de Conversión</div>
+                    <span>📊</span>
+                </div>
+                <div class="stat-value">4.8%</div>
+                <div class="stat-change change-positive">
+                    <span>↑</span> 2.1% vs período anterior
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Ingresos</div>
+                    <span>💰</span>
+                </div>
+                <div class="stat-value">$45,231</div>
+                <div class="stat-change change-positive">
+                    <span>↑</span> 8.3% vs período anterior
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Rebote</div>
+                    <span>📉</span>
+                </div>
+                <div class="stat-value">23.1%</div>
+                <div class="stat-change change-negative">
+                    <span>↓</span> 1.7% vs período anterior
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Tráfico Mensual</h3>
+                </div>
+                <div style="height: 300px; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: var(--text-light);">
+                    [Gráfico de Tráfico]
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Distribución</h3>
+                </div>
+                <div style="height: 300px; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: var(--text-light);">
+                    [Gráfico Circular]
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Páginas Más Visitadas</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Página</th>
+                        <th>Visitantes</th>
+                        <th>Tasa de Rebote</th>
+                        <th>Tiempo Promedio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/inicio</td>
+                        <td>5,231</td>
+                        <td>32%</td>
+                        <td>2m 45s</td>
+                    </tr>
+                    <tr>
+                        <td>/productos</td>
+                        <td>3,458</td>
+                        <td>21%</td>
+                        <td>3m 12s</td>
+                    </tr>
+                    <tr>
+                        <td>/blog</td>
+                        <td>2,987</td>
+                        <td>28%</td>
+                        <td>4m 03s</td>
+                    </tr>
+                    <tr>
+                        <td>/contacto</td>
+                        <td>1,234</td>
+                        <td>45%</td>
+                        <td>1m 52s</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
